@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+    # Laravel application service
+    app:
+        build: .docker
+        container_name: laravel_app
+        ports:
+            - "8080:80" # Expose Apache on port 8080
+        volumes:
+            - .:/var/www/html # Sync current directory to container's /var/www/html
+            - ./.docker/volumes/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+        depends_on:
+            - mysql
+
+    # MySQL service
+    mysql:
+        image: mysql:latest
+        container_name: mysql_db
+        volumes:
+            - ./.docker/volumes/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: 1234
+            MYSQL_DATABASE: laravel_db
+            MYSQL_USER: root
+            MYSQL_PASSWORD: pass
+        ports:
+            - "3307:3306"
+
